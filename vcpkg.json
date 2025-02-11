@@ -1,0 +1,10 @@
+{
+  "dependencies": [
+    "dpp",
+    "nlohmann-json",
+    "openssl",
+    "opus",
+    "zlib",
+    "fmt"
+  ]
+}

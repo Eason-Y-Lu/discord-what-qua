@@ -1,0 +1,40 @@
+{
+  "version": 4,
+  "configurePresets": [
+    {
+      "name": "vcpkg",
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+      }
+    },
+    {
+      "name": "debug-linux-amd64",
+      "displayName": "Debug for Linux-x86-64",
+      "inherits": "vcpkg",
+	  "binaryDir":"${sourceDir}/cmake-build-debug",
+	  "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_C_COMPILER":"clang",
+        "CMAKE_C_FLAGS": "-g -glldb -std=gnu17 -Wall -Wextra -Wpedantic -fuse-ld=lld -fPIC -fPIE",
+        "CMAKE_CXX_COMPILER":"clang++",
+        "CMAKE_CXX_FLAGS": "-g -glldb -std=gnu++20 -Wall -Wextra -Wpedantic -fuse-ld=lld -fPIC -fPIE",
+        "VCPKG_TARGET_ARCHITECTURE":"x64",
+        "VCPKG_LIBRARY_LINKAGE":"static",
+        "VCPKG_CMAKE_SYSTEM_NAME":"Linux"
+	  }
+    },
+    {
+      "name": "release",
+      "displayName": "Release",
+      "inherits": "vcpkg",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/cmake-build-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_COMPILER":"clang++",
+        "CMAKE_CXX_FLAGS": "-o3 -std=gnu++20 -Wall -Wextra -Wpedantic -fuse-ld=lld -fPIC -fPIE"
+      }
+     }
+  ]
+}
