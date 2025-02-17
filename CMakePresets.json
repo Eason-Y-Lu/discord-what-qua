@@ -17,9 +17,9 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_C_COMPILER": "clang",
-        "CMAKE_C_FLAGS": "-g -glldb -std=gnu17 -Wall -Wextra -Wpedantic -fuse-ld=lld -fPIC -fPIE",
+        "CMAKE_C_FLAGS": "-g -glldb -std=gnu17 -Wall -Wextra -Wpedantic -fuse-ld=lld -fPIC -fPIE -fsanitize=undefined",
         "CMAKE_CXX_COMPILER": "clang++",
-        "CMAKE_CXX_FLAGS": "-g -glldb -std=gnu++20 -Wall -Wextra -Wpedantic -fuse-ld=lld -fPIC -fPIE",
+        "CMAKE_CXX_FLAGS": "-g -glldb -std=gnu++23 -Wall -Wextra -Wpedantic -fuse-ld=lld -fPIC -fPIE -fsanitize=undefined",
         "VCPKG_TARGET_ARCHITECTURE": "x64",
         "VCPKG_LIBRARY_LINKAGE": "static",
         "VCPKG_CMAKE_SYSTEM_NAME": "Linux",
@@ -27,16 +27,33 @@
       }
     },
     {
-      "name": "release",
-      "displayName": "Release",
+      "name": "release-linux-amd64-fast",
+      "displayName": "Release for Linux-x86-64 (speed optimized)",
       "inherits": "vcpkg",
-      "binaryDir": "${sourceDir}/cmake-build-release",
+      "binaryDir": "${sourceDir}/cmake-build-release-fast",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "CMAKE_C_COMPILER": "clang",
-        "CMAKE_C_FLAGS": "-03 -std=gnu17 -Wall -Wextra -Wpedantic -fuse-ld=lld -fPIC -fPIE",
+        "CMAKE_C_FLAGS": "--O3 -std=gnu17 -Wall -Wextra -Wpedantic -fuse-ld=lld -fPIC -fPIE -fsanitize=undefined",
         "CMAKE_CXX_COMPILER": "clang++",
-        "CMAKE_CXX_FLAGS": "-o3 -std=gnu++20 -Wall -Wextra -Wpedantic -fuse-ld=lld -fPIC -fPIE",
+        "CMAKE_CXX_FLAGS": "-O3 -std=gnu++23 -Wall -Wextra -Wpedantic -fuse-ld=lld -fPIC -fPIE -fsanitize=undefined",
+        "VCPKG_TARGET_ARCHITECTURE": "x64",
+        "VCPKG_LIBRARY_LINKAGE": "static",
+        "VCPKG_CMAKE_SYSTEM_NAME": "Linux",
+        "VCPKG_TARGET_TRIPLET": "x64-linux"
+      }
+    },
+    {
+      "name": "release-linux-amd64-size",
+      "displayName": "Release for Linux-x86-64 (size optimized)",
+      "inherits": "vcpkg",
+      "binaryDir": "${sourceDir}/cmake-build-release-size",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "MinSizeRel",
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_C_FLAGS": "-Oz -std=gnu17 -Wall -Wextra -Wpedantic -fuse-ld=lld -fPIC -fPIE -fsanitize=undefined",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_CXX_FLAGS": "-Oz -std=gnu++23 -Wall -Wextra -Wpedantic -fuse-ld=lld -fPIC -fPIE -fsanitize=undefined",
         "VCPKG_TARGET_ARCHITECTURE": "x64",
         "VCPKG_LIBRARY_LINKAGE": "static",
         "VCPKG_CMAKE_SYSTEM_NAME": "Linux",
