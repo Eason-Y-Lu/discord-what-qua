@@ -1,0 +1,84 @@
+name: "CodeQL Advanced"
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  schedule:
+    - cron: "21 20 * * 4"
+
+jobs:
+  build-and-analyze:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      packages: read
+      actions: read
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: "recursive"
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: "c-cpp"
+          build-mode: "manual"
+
+      - name: Set up build environment
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install ca-certificates gpg wget -y
+          test -f /usr/share/doc/kitware-archive-keyring/copyright || wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null
+          echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ noble main' | sudo tee /etc/apt/sources.list.d/kitware.list >/dev/null 
+          sudo apt-get update -y 
+          test -f /usr/share/doc/kitware-archive-keyring/copyright || sudo rm /usr/share/keyrings/kitware-archive-keyring.gpg
+          sudo apt-get install kitware-archive-keyring -y
+          sudo apt-get full-upgrade -y --autoremove --purge
+          sudo apt-get -y install clang cmake ninja-build libstdc++-10-dev lld linux-libc-dev make build-essential curl zip unzip tar bash-completion pkg-config software-properties-common openssl
+
+      - name: Define VCPKG_ROOT environment variable
+        run: |
+          cd ${{ github.workspace }}/../
+          echo "VCPKG_ROOT=$(pwd)/vcpkg" >> $GITHUB_ENV
+          echo "$VCPKG_ROOT" >> "$GITHUB_PATH"
+
+      - name: Define cache hash based on vcpkg.json
+        run: |
+          cd ${{ github.workspace }}
+          CACHE_HASH=$(openssl dgst -sha256 vcpkg.json | awk '{print $2}')
+          echo "CACHE_HASH=$CACHE_HASH" >> $GITHUB_ENV
+          
+      - name: Cache vcpkg
+        id: cache-vcpkg
+        uses: actions/cache@v4
+        with:
+          path: ${{env.VCPKG_ROOT}}/**
+          key: ${{ runner.os }}-vcpkg-${{env.CACHE_HASH}}
+          restore-keys: ${{ runner.os }}-vcpkg
+
+      - name: Install vcpkg
+        if: steps.cache-vcpkg.outputs.cache-hit != 'true'
+        run: |
+          cd ${{ github.workspace }}/../
+          git clone https://github.com/microsoft/vcpkg.git
+          cd vcpkg
+          ./bootstrap-vcpkg.sh -disableMetrics
+          ./vcpkg integrate install
+          echo "$VCPKG_ROOT" >> "$GITHUB_PATH"
+
+      - name: Generate build files
+        run: |
+          cmake --preset=debug-linux-amd64 -DCMAKE_TOOLCHAIN_FILE=${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake
+
+      - name: Build
+        run: |
+          cmake --build cmake-build-debug --parallel $(($(nproc) - 1))
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:c-cpp"
