@@ -1,3 +1,4 @@
 [submodule "DPP"]
 	path = DPP
 	url = https://github.com/brainboxdotcc/DPP.git
+	ignore = dirty
