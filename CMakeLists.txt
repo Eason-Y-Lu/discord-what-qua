@@ -1,3 +1,4 @@
+#SPDX-License-Identifier: BSD-3-Clause-No-Nuclear-License-2014
 cmake_minimum_required(VERSION 3.23)
 
 set(VCPKG_LIBRARY_LINKAGE static CACHE STRING "Linkage of vcpkg libraries" FORCE)
