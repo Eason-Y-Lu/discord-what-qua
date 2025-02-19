@@ -1,6 +1,5 @@
 {
   "dependencies": [
-    "openssl",
     "opus",
     "zlib",
     "nlohmann-json"

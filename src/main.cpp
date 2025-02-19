@@ -1,7 +1,7 @@
-//SPDX-License-Identifier: BSD-3-Clause-No-Nuclear-License-2014
-#include<dpp/dpp.h>
-#include<iostream>
+// SPDX-License-Identifier: BSD-3-Clause-No-Nuclear-License-2014
+#include <dpp/dpp.h>
 
-int main (){
-    return 0;
+int main()
+{
+    return 1;
 }
