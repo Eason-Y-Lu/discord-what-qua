@@ -10,54 +10,84 @@
       }
     },
     {
-      "name": "debug-linux-amd64",
-      "displayName": "Debug for Linux-x86-64",
+      "name": "debug-linux",
+      "hidden": true,
       "inherits": "vcpkg",
-      "binaryDir": "${sourceDir}/cmake-build-debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_C_COMPILER": "clang",
-        "CMAKE_C_FLAGS": "-g -glldb -std=gnu17 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-command-line-argument -fuse-ld=lld -fPIC -fPIE -fsanitize=undefined",
+        "CMAKE_C_FLAGS": "-g -glldb -std=gnu17 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-command-line-argument -fuse-ld=lld -fPIC -fPIE -flto -fvisibility=hidden -fsanitize=undefined,address,shadow-call-stack",
         "CMAKE_CXX_COMPILER": "clang++",
-        "CMAKE_CXX_FLAGS": "-g -glldb -std=gnu++23 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-command-line-argument -fuse-ld=lld -fPIC -fPIE -fsanitize=undefined",
-        "VCPKG_TARGET_ARCHITECTURE": "x64",
-        "VCPKG_LIBRARY_LINKAGE": "static",
-        "VCPKG_CMAKE_SYSTEM_NAME": "Linux",
-        "VCPKG_TARGET_TRIPLET": "x64-linux"
+        "CMAKE_CXX_FLAGS": "-g -glldb -std=gnu++23 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-command-line-argument -fuse-ld=lld -fPIC -fPIE -flto -fvisibility=hidden -fsanitize=undefined,address,shadow-call-stack"
       }
     },
     {
-      "name": "release-linux-amd64-fast",
-      "displayName": "Release for Linux-x86-64 (speed optimized)",
+      "name": "release-linux",
+      "hidden": true,
       "inherits": "vcpkg",
-      "binaryDir": "${sourceDir}/cmake-build-release-fast",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "CMAKE_C_COMPILER": "clang",
-        "CMAKE_C_FLAGS": "-O3 -std=gnu17 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-command-line-argument -fuse-ld=lld -fPIC -fPIE -fsanitize=undefined",
+        "CMAKE_C_FLAGS": "-D_FORTIFY_SOURCE=3 -O3 -std=gnu17 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-command-line-argument -fuse-ld=lld -fPIC -fPIE -flto -fvisibility=hidden -fsanitize=undefined,address,shadow-call-stack",
         "CMAKE_CXX_COMPILER": "clang++",
-        "CMAKE_CXX_FLAGS": "-O3 -std=gnu++23 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-command-line-argument -fuse-ld=lld -fPIC -fPIE -fsanitize=undefined",
-        "VCPKG_TARGET_ARCHITECTURE": "x64",
-        "VCPKG_LIBRARY_LINKAGE": "static",
-        "VCPKG_CMAKE_SYSTEM_NAME": "Linux",
+        "CMAKE_CXX_FLAGS": "-D_FORTIFY_SOURCE=3 -O3 -std=gnu++23 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-command-line-argument -fuse-ld=lld -fPIC -fPIE -flto -fvisibility=hidden -fsanitize=undefined,address,shadow-call-stack"
+      }
+    },
+    {
+      "name": "minsize-linux",
+      "hidden": true,
+      "inherits": "vcpkg",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "MinSizeRel",
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_C_FLAGS": "-D_FORTIFY_SOURCE=3 -Oz -std=gnu17 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-command-line-argument -fuse-ld=lld -fPIC -fPIE -flto -fvisibility=hidden -fsanitize=undefined,address,shadow-call-stack",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_CXX_FLAGS": "-D_FORTIFY_SOURCE=3 -Oz -std=gnu++23 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-command-line-argument -fuse-ld=lld -fPIC -fPIE -flto -fvisibility=hidden -fsanitize=undefined,address,shadow-call-stack"
+      }
+    },
+    {
+      "name": "x64-linux-debug",
+      "displayName": "Debug for Linux-x64",
+      "inherits": "debug-linux",
+      "binaryDir": "${sourceDir}/x64_linux_cmake-debug",
+      "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": "x64-linux"
       }
     },
     {
-      "name": "release-linux-amd64-size",
-      "displayName": "Release for Linux-x86-64 (size optimized)",
-      "inherits": "vcpkg",
-      "binaryDir": "${sourceDir}/cmake-build-release-size",
+      "name": "x64-linux-release",
+      "displayName": "Release for Linux-x64 (speed optimized)",
+      "inherits": "release-linux",
+      "binaryDir": "${sourceDir}/x64_linux_cmake-release",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "MinSizeRel",
-        "CMAKE_C_COMPILER": "clang",
-        "CMAKE_C_FLAGS": "-Oz -std=gnu17 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-command-line-argument -fuse-ld=lld -fPIC -fPIE -fsanitize=undefined",
-        "CMAKE_CXX_COMPILER": "clang++",
-        "CMAKE_CXX_FLAGS": "-Oz -std=gnu++23 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-command-line-argument -fuse-ld=lld -fPIC -fPIE -fsanitize=undefined",
-        "VCPKG_TARGET_ARCHITECTURE": "x64",
-        "VCPKG_LIBRARY_LINKAGE": "static",
-        "VCPKG_CMAKE_SYSTEM_NAME": "Linux",
         "VCPKG_TARGET_TRIPLET": "x64-linux"
+      }
+    },
+    {
+      "name": "x64-linux-minsize",
+      "displayName": "Release for Linux-x64 (size optimized)",
+      "inherits": "minsize-linux",
+      "binaryDir": "${sourceDir}/x64_linux_cmake-minsize",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-linux"
+      }
+    },
+    {
+      "name": "arm64-linux-debug",
+      "displayName": "Debug for Linux-arm64",
+      "inherits": "debug-linux",
+      "binaryDir": "${sourceDir}/arm64_linux_cmake-debug",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "arm64-linux"
+      }
+    },
+    {
+      "name": "arm64-linux-release",
+      "displayName": "Release for Linux-arm64 (speed optimized)",
+      "inherits": "release-linux",
+      "binaryDir": "${sourceDir}/arm64_linux_cmake-release",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "arm64-linux-release"
       }
     }
   ]

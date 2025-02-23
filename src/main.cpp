@@ -27,12 +27,12 @@ std::string read_token() {
 struct struct_what_data {
     std::string msg_content;
     int asked_times;
-    int channel_id;
+    dpp::snowflake channel_id;
 };
 
 struct what_db_data {
     std::vector<struct_what_data> what_data_blob;
-    int guild_id;
+    dpp::snowflake guild_id;
 };
 
 struct what_data_query {
@@ -41,8 +41,8 @@ struct what_data_query {
 };
 
 void add_what_msg(std::vector<what_db_data> &ingress_what_db, const std::string &ingress_msg_content,
-                  const int ingress_channel_id,
-                  const int ingress_guild_id) {
+                  const dpp::snowflake ingress_channel_id,
+                  const dpp::snowflake ingress_guild_id) {
     for (auto &[what_data_blob, egress_guild_id]: ingress_what_db) {
         if (ingress_guild_id == egress_guild_id) {
             for (auto &[egress_msg_content, egress_asked_times, egress_channel_id]: what_data_blob) {
@@ -52,7 +52,7 @@ void add_what_msg(std::vector<what_db_data> &ingress_what_db, const std::string 
                     return;
                 }
             }
-            struct_what_data egress_struct_what_data = {ingress_msg_content, 0, ingress_channel_id};
+            const struct_what_data egress_struct_what_data = {ingress_msg_content, 0, ingress_channel_id};
             what_data_blob.push_back(egress_struct_what_data);
             return;
         }
@@ -64,8 +64,8 @@ void add_what_msg(std::vector<what_db_data> &ingress_what_db, const std::string 
     ingress_what_db.push_back(ingress_what_db_data);
 }
 
-what_data_query lookup_msg(std::vector<what_db_data> &ingress_what_db, const int ingress_channel_id,
-                           const int ingress_guild_id) {
+what_data_query lookup_msg(std::vector<what_db_data> &ingress_what_db, const dpp::snowflake ingress_channel_id,
+                           const dpp::snowflake ingress_guild_id) {
     for (auto &[what_data_blob, egress_guild_id]: ingress_what_db) {
         if (ingress_guild_id == egress_guild_id) {
             for (auto &[egress_msg_content, egress_asked_times, egress_channel_id]: what_data_blob) {
@@ -110,8 +110,7 @@ int main() {
         std::string content = event.msg.content;
         std::ranges::transform(content, content.begin(), ::tolower);
         if (content == "what" || content == "what?") {
-            const what_data_query db_result = lookup_msg(main_what_db_vector, (int) event.msg.channel_id,
-                                                         (int) event.msg.guild_id);
+            const what_data_query db_result = lookup_msg(main_what_db_vector, event.msg.channel_id, event.msg.guild_id);
             switch (db_result.asked_times) {
                 default:
                     event.reply("This is not supposed to happen, notify <@1110811715169423381>");
@@ -134,12 +133,12 @@ int main() {
                     event.reply("# " + db_result.msg_content);
                     break;
                 case 5:
-                    const int random_insult_index = gen_rand_int(0, insults.size());
+                    const int random_insult_index = gen_rand_int(0, static_cast<int>(insults.size()));
                     event.reply("# " + insults[random_insult_index]);
                     break;
             }
         } else {
-            add_what_msg(main_what_db_vector, event.msg.content, (int) event.msg.channel_id, (int) event.msg.guild_id);
+            add_what_msg(main_what_db_vector, event.msg.content, event.msg.channel_id, event.msg.guild_id);
         }
     });
 

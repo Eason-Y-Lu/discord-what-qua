@@ -6,7 +6,8 @@
 Place a fine named `STOP` in the same directory as the bot. The bot will stop gracefully after calling the next command in any of the servers.
 
 ### Stop the bot immediately
-Control-C
+Control-C, it will not clean up the memery.
+The cleanup will be done by the OS.
 
 ### LEGAL NOTICE
 

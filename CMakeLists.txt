@@ -13,7 +13,6 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 find_package(Opus CONFIG REQUIRED)
 find_package(OpenSSL REQUIRED)
 find_package(ZLIB REQUIRED)
-find_package(nlohmann_json CONFIG REQUIRED)
 
 include_directories(DPP/include)
 
@@ -46,7 +45,7 @@ if (EXISTS ${CMAKE_SOURCE_DIR}/src/token.txt)
     configure_file(src/token.txt ${CMAKE_BINARY_DIR}/token.txt COPYONLY)
 endif ()
 
-add_dependencies(dpp mlspp bytes hpke mls_vectors tls_syntax Opus::opus OpenSSL::SSL OpenSSL::Crypto ZLIB::ZLIB nlohmann_json::nlohmann_json)
+add_dependencies(dpp mlspp bytes hpke mls_vectors tls_syntax Opus::opus OpenSSL::SSL OpenSSL::Crypto ZLIB::ZLIB)
 
 add_executable(bot src/main.cpp)
 
