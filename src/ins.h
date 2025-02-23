@@ -19,7 +19,7 @@
 #define INS_H
 #include <string>
 #include <vector>
-auto *insults_ptr = new std::vector<std::string>{
+const inline std::vector<std::string> insults = {
     "And you call yourself a Rocket Scientist!",
     "Where did you learn to type?",
     "Are you on drugs?",
@@ -77,5 +77,4 @@ auto *insults_ptr = new std::vector<std::string>{
     "There's nothing wrong with you that an expensive operation can't prolong.",
     "I'm very sorry, but I'm not allowed to argue unless you've paid."
 };
-std::vector<std::string> &insults = *insults_ptr;
 #endif

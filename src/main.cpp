@@ -100,8 +100,6 @@ int main() {
         }
         if (auto STOP = std::ifstream("STOP"); STOP.is_open()) {
             event.reply("STOP file detected, shutting down.");
-            free(insults_ptr);
-            insults_ptr = nullptr;
             exit(0);
         }
         std::string content = event.msg.content;
@@ -140,7 +138,5 @@ int main() {
     });
 
     bot.start(dpp::st_wait);
-    free(insults_ptr);
-    insults_ptr = nullptr;
     return 0;
 }
