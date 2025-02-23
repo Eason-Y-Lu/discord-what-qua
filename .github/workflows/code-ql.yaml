@@ -71,11 +71,11 @@ jobs:
 
       - name: Generate build files
         run: |
-          cmake --preset=debug-linux-amd64 -DCMAKE_TOOLCHAIN_FILE=${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake
+          cmake --preset=x64-linux-debug -DCMAKE_TOOLCHAIN_FILE=${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake
 
       - name: Build
         run: |
-          cmake --build cmake-build-debug --parallel $(($(nproc) - 1))
+          cmake --build x64_linux_cmake-debug --parallel $(($(nproc) - 1))
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
