@@ -28,7 +28,7 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "CMAKE_C_COMPILER": "clang",
-        "CMAKE_C_FLAGS": "-D_FORTIFY_SOURCE=3 -O3 -std=gnu17 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-command-line-argument -fuse-ld=lld -fPIC -fPIE -flto -fvisibility=hidden -fstack-protector-strong-fsanitize=undefined",
+        "CMAKE_C_FLAGS": "-D_FORTIFY_SOURCE=3 -O3 -std=gnu17 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-command-line-argument -fuse-ld=lld -fPIC -fPIE -flto -fvisibility=hidden -fstack-protector-strong -fsanitize=undefined",
         "CMAKE_CXX_COMPILER": "clang++",
         "CMAKE_CXX_FLAGS": "-D_FORTIFY_SOURCE=3 -O3 -std=gnu++23 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-command-line-argument -fuse-ld=lld -fPIC -fPIE -flto -fvisibility=hidden -fstack-protector-strong -fsanitize=undefined"
       }
