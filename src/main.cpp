@@ -99,6 +99,14 @@ int main() {
         if (event.msg.author.is_bot()) {
             return;
         }
+        if (auto STOP = std::ifstream("STOP"); STOP.is_open()) {
+            event.reply("STOP file detected, shutting down.");
+            free(main_what_db_vector_ptr);
+            main_what_db_vector_ptr = nullptr;
+            free(insults_ptr);
+            insults_ptr = nullptr;
+            exit(0);
+        }
         std::string content = event.msg.content;
         std::ranges::transform(content, content.begin(), ::tolower);
         if (content == "what" || content == "what?") {
