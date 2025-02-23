@@ -92,7 +92,6 @@ jobs:
           submodules: "recursive"
 
       - name: Set up build environment
-        if: steps.cache-build-environment.outputs.cache-hit != 'true'
         run: |
           sudo apt-get update -y
           sudo apt-get install ca-certificates gpg wget -y
@@ -171,7 +170,6 @@ jobs:
           submodules: "recursive"
 
       - name: Set up build environment
-        if: steps.cache-build-environment.outputs.cache-hit != 'true'
         run: |
           sudo apt-get update -y
           sudo apt-get install ca-certificates gpg wget -y
@@ -250,7 +248,6 @@ jobs:
           submodules: "recursive"
 
       - name: Set up build environment
-        if: steps.cache-build-environment.outputs.cache-hit != 'true'
         run: |
           sudo apt-get update -y
           sudo apt-get install ca-certificates gpg wget -y
@@ -329,7 +326,6 @@ jobs:
           submodules: "recursive"
 
       - name: Set up build environment
-        if: steps.cache-build-environment.outputs.cache-hit != 'true'
         run: |
           sudo apt-get update -y
           sudo apt-get install ca-certificates gpg wget -y

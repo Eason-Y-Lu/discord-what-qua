@@ -84,8 +84,7 @@ what_data_query lookup_msg(std::vector<what_db_data> &ingress_what_db, const dpp
 }
 
 int main() {
-    auto *main_what_db_vector_ptr = new std::vector<what_db_data>;
-    std::vector<what_db_data> &main_what_db_vector = *main_what_db_vector_ptr;
+    std::vector<what_db_data> main_what_db_vector = {};
     dpp::cluster bot(read_token(), dpp::i_all_intents);
 
     bot.on_log(dpp::utility::cout_logger());
@@ -95,14 +94,12 @@ int main() {
         bot.log(dpp::loglevel::ll_info, "Bot is in " + bot.me.id.str());
     });
 
-    bot.on_message_create([&bot, &main_what_db_vector, &main_what_db_vector_ptr](const dpp::message_create_t &event) {
+    bot.on_message_create([&bot, &main_what_db_vector](const dpp::message_create_t &event) {
         if (event.msg.author.is_bot()) {
             return;
         }
         if (auto STOP = std::ifstream("STOP"); STOP.is_open()) {
             event.reply("STOP file detected, shutting down.");
-            free(main_what_db_vector_ptr);
-            main_what_db_vector_ptr = nullptr;
             free(insults_ptr);
             insults_ptr = nullptr;
             exit(0);
@@ -110,27 +107,27 @@ int main() {
         std::string content = event.msg.content;
         std::ranges::transform(content, content.begin(), ::tolower);
         if (content == "what" || content == "what?") {
-            const what_data_query db_result = lookup_msg(main_what_db_vector, event.msg.channel_id, event.msg.guild_id);
-            switch (db_result.asked_times) {
+            switch (const auto [msg_content, asked_times] = lookup_msg(main_what_db_vector, event.msg.channel_id,
+                                                                       event.msg.guild_id); asked_times) {
                 default:
                     event.reply("This is not supposed to happen, notify <@1110811715169423381>");
                     bot.log(dpp::loglevel::ll_error, "This is not supposed to happen, notify <@1110811715169423381>");
                     bot.log(dpp::loglevel::ll_error, "You can also email him at: aelnosu@outlook.com");
                     break;
                 case 0:
-                    event.reply(db_result.msg_content);
+                    event.reply(msg_content);
                     break;
                 case 1:
-                    event.reply(db_result.msg_content);
+                    event.reply(msg_content);
                     break;
                 case 2:
-                    event.reply("### " + db_result.msg_content);
+                    event.reply("### " + msg_content);
                     break;
                 case 3:
-                    event.reply("## " + db_result.msg_content);
+                    event.reply("## " + msg_content);
                     break;
                 case 4:
-                    event.reply("# " + db_result.msg_content);
+                    event.reply("# " + msg_content);
                     break;
                 case 5:
                     const int random_insult_index = gen_rand_int(0, static_cast<int>(insults.size()));
@@ -143,8 +140,6 @@ int main() {
     });
 
     bot.start(dpp::st_wait);
-    free(main_what_db_vector_ptr);
-    main_what_db_vector_ptr = nullptr;
     free(insults_ptr);
     insults_ptr = nullptr;
     return 0;
