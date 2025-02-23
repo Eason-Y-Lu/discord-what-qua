@@ -44,7 +44,6 @@ jobs:
         with:
           path: ${{env.VCPKG_ROOT}}/**
           key: ${{ runner.os }}-${{ runner.arch }}-vcpkg-${{env.CACHE_HASH}}
-          restore-keys: ${{ runner.os }}-vcpkg
 
       - name: Install vcpkg
         if: steps.cache-vcpkg.outputs.cache-hit != 'true'
@@ -121,7 +120,6 @@ jobs:
         with:
           path: ${{env.VCPKG_ROOT}}/**
           key: ${{ runner.os }}-${{ runner.arch }}-vcpkg-${{env.CACHE_HASH}}
-          restore-keys: ${{ runner.os }}-vcpkg
 
       - name: Install vcpkg
         if: steps.cache-vcpkg.outputs.cache-hit != 'true'
@@ -199,7 +197,6 @@ jobs:
         with:
           path: ${{env.VCPKG_ROOT}}/**
           key: ${{ runner.os }}-${{ runner.arch }}-vcpkg-${{env.CACHE_HASH}}
-          restore-keys: ${{ runner.os }}-vcpkg
 
       - name: Install vcpkg
         if: steps.cache-vcpkg.outputs.cache-hit != 'true'
@@ -277,7 +274,6 @@ jobs:
         with:
           path: ${{env.VCPKG_ROOT}}/**
           key: ${{ runner.os }}-${{ runner.arch }}-vcpkg-${{env.CACHE_HASH}}
-          restore-keys: ${{ runner.os }}-vcpkg
 
       - name: Install vcpkg
         if: steps.cache-vcpkg.outputs.cache-hit != 'true'
@@ -355,7 +351,6 @@ jobs:
         with:
           path: ${{env.VCPKG_ROOT}}/**
           key: ${{ runner.os }}-${{ runner.arch }}-vcpkg-${{env.CACHE_HASH}}
-          restore-keys: ${{ runner.os }}-vcpkg
 
       - name: Install vcpkg
         if: steps.cache-vcpkg.outputs.cache-hit != 'true'

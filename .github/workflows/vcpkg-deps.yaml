@@ -2,7 +2,7 @@ name: Populate dependencies
 
 on:
   push:
-    branches: ["main"]
+    branches: [ "main" ]
   workflow_dispatch:
 
 permissions:
@@ -44,14 +44,13 @@ jobs:
           cd ${{ github.workspace }}
           CACHE_HASH=$(openssl dgst -sha256 vcpkg.json | awk '{print $2}')
           echo "CACHE_HASH=$CACHE_HASH" >> $GITHUB_ENV
-          
+
       - name: Cache vcpkg
         id: cache-vcpkg
         uses: actions/cache@v4
         with:
           path: ${{env.VCPKG_ROOT}}/**
-          key: ${{ runner.os }}-vcpkg-${{env.CACHE_HASH}}
-          restore-keys: ${{ runner.os }}-vcpkg
+          key: ${{ runner.os }}-${{ runner.arch }}-vcpkg-${{env.CACHE_HASH}}
 
       - name: Install vcpkg
         if: steps.cache-vcpkg.outputs.cache-hit != 'true'
