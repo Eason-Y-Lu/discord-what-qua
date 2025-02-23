@@ -91,7 +91,7 @@ int main() {
 
     bot.on_ready([&bot](const dpp::ready_t &event) {
         bot.log(dpp::loglevel::ll_info, "Logged in as " + bot.me.username);
-        bot.log(dpp::loglevel::ll_info, "Bot is in " + bot.me.id.str());
+        bot.log(dpp::loglevel::ll_info, "Bot ID is " + bot.me.id.str());
     });
 
     bot.on_message_create([&bot, &main_what_db_vector](const dpp::message_create_t &event) {
