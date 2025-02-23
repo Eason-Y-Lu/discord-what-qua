@@ -207,3 +207,4 @@ prefab/
 ## Other ignores
 build/
 .vscode/
+src/token.txt

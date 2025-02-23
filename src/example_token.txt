@@ -1,0 +1,2 @@
+// Place your discord bot token here or at the same level as the executable
+// if you decided to use this file, rename it to token.txt

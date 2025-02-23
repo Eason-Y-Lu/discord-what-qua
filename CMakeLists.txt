@@ -42,10 +42,12 @@ link_directories(${CMAKE_BINARY_DIR}/DPP/library/mlspp/lib/hpke)
 link_directories(${CMAKE_BINARY_DIR}/DPP/library/mlspp/lib/mls_vectors)
 link_directories(${CMAKE_BINARY_DIR}/DPP/library/mlspp/lib/tls_syntax)
 
+configure_file(src/token.txt ${CMAKE_BINARY_DIR}/token.txt COPYONLY)
+
 add_dependencies(dpp mlspp bytes hpke mls_vectors tls_syntax Opus::opus OpenSSL::SSL OpenSSL::Crypto ZLIB::ZLIB nlohmann_json::nlohmann_json)
 
 add_executable(bot src/main.cpp)
 
-add_dependencies(bot dpp)
+add_dependencies(bot dpp OpenSSL::Crypto)
 
-target_link_libraries(bot PRIVATE dpp)
+target_link_libraries(bot PRIVATE dpp OpenSSL::Crypto)

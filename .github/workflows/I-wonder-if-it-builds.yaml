@@ -24,7 +24,7 @@ jobs:
           test -f /usr/share/doc/kitware-archive-keyring/copyright || sudo rm /usr/share/keyrings/kitware-archive-keyring.gpg
           sudo apt-get install kitware-archive-keyring -y
           sudo apt-get full-upgrade -y --autoremove --purge
-          sudo apt-get -y install clang cmake ninja-build libstdc++-10-dev lld linux-libc-dev make build-essential curl zip unzip tar bash-completion pkg-config software-properties-common openssl
+          sudo apt-get -y install clang cmake ninja-build libstdc++-10-dev lld linux-libc-dev make build-essential curl zip unzip tar bash-completion pkg-config software-properties-common openssl libssl-dev
 
       - name: Define VCPKG_ROOT environment variable
         run: |
@@ -102,7 +102,7 @@ jobs:
           test -f /usr/share/doc/kitware-archive-keyring/copyright || sudo rm /usr/share/keyrings/kitware-archive-keyring.gpg
           sudo apt-get install kitware-archive-keyring -y
           sudo apt-get full-upgrade -y --autoremove --purge
-          sudo apt-get -y install clang cmake ninja-build libstdc++-10-dev lld linux-libc-dev make build-essential curl zip unzip tar bash-completion pkg-config software-properties-common openssl
+          sudo apt-get -y install clang cmake ninja-build libstdc++-10-dev lld linux-libc-dev make build-essential curl zip unzip tar bash-completion pkg-config software-properties-common openssl libssl-dev
 
       - name: Define VCPKG_ROOT environment variable
         run: |
@@ -181,7 +181,7 @@ jobs:
           test -f /usr/share/doc/kitware-archive-keyring/copyright || sudo rm /usr/share/keyrings/kitware-archive-keyring.gpg
           sudo apt-get install kitware-archive-keyring -y
           sudo apt-get full-upgrade -y --autoremove --purge
-          sudo apt-get -y install clang cmake ninja-build libstdc++-10-dev lld linux-libc-dev make build-essential curl zip unzip tar bash-completion pkg-config software-properties-common openssl
+          sudo apt-get -y install clang cmake ninja-build libstdc++-10-dev lld linux-libc-dev make build-essential curl zip unzip tar bash-completion pkg-config software-properties-common openssl libssl-dev
 
       - name: Define VCPKG_ROOT environment variable
         run: |

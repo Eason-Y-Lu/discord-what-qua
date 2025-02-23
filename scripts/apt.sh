@@ -9,4 +9,4 @@ apt-get update -y
 test -f /usr/share/doc/kitware-archive-keyring/copyright || rm /usr/share/keyrings/kitware-archive-keyring.gpg
 apt-get install kitware-archive-keyring -y
 apt-get full-upgrade -y --autoremove --purge
-apt-get -y install clang cmake ninja-build libstdc++-10-dev lld linux-libc-dev git-all make build-essential curl zip unzip tar bash-completion pkg-config software-properties-common openssl
+apt-get -y install clang cmake ninja-build libstdc++-10-dev lld linux-libc-dev git-all make build-essential curl zip unzip tar bash-completion pkg-config software-properties-common openssl libssl-dev
