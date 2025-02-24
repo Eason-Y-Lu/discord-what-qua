@@ -1,2 +1,3 @@
-// Place your discord bot token here or at the same level as the executable
-// if you decided to use this file, rename it to token.txt
+// Place your discord bot token here or at the same level as the executable.
+// Delete everything including those "comments" so the file only has the token.
+// If you decided to use this file, rename it to token.txt
