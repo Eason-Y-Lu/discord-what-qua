@@ -10,3 +10,4 @@ chmod +x /usr/local/bin/what-bot/what-bot-x64
 systemctl daemon-reload
 systemctl --user enable what-bot-x64
 systemctl --user start what-bot-x64
+systemctl --user status what-bot-x64
