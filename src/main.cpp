@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSD-3-Clause-No-Nuclear-License-2014
 #include <dpp/dpp.h>
+#include <dpp/unicode_emoji.h>
 #include <fstream>
+#include <ranges>
 #include <string>
 #include "ins.h"
 #include <openssl/rand.h>
@@ -86,7 +88,6 @@ what_data_query lookup_msg(std::vector<what_db_data> &ingress_what_db, const dpp
 int main() {
     std::vector<what_db_data> main_what_db_vector = {};
     dpp::cluster bot(read_token(), dpp::i_all_intents);
-
     bot.on_log(dpp::utility::cout_logger());
 
     bot.on_ready([&bot](const dpp::ready_t &event) {
@@ -95,6 +96,14 @@ int main() {
     });
 
     bot.on_message_create([&bot, &main_what_db_vector](const dpp::message_create_t &event) {
+        auto *yolocowow_ptr = dpp::find_user(dpp::snowflake(1110811715169423381));
+        // remove this block after testing
+        if (yolocowow_ptr != nullptr) {
+            if (event.msg.author.id == yolocowow_ptr->id) {
+                bot.message_add_reaction(event.msg.channel_id, event.msg.id, dpp::unicode_emoji::flushed);
+            }
+        }
+        // end of block
         if (event.msg.author.is_bot()) {
             return;
         }
