@@ -1,0 +1,9 @@
+FROM rockylinux:9
+
+WORKDIR /build
+
+RUN dnf upgrade --refresh -y && dnf install -y systemd
+
+RUN echo "root:root" | chpasswd
+
+CMD [ "/sbin/init" ]
