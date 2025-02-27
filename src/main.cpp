@@ -10,17 +10,17 @@
 #include <openssl/err.h>
 #include "ins.h"
 
-void send_and_delete_msg(dpp::cluster &bot,const dpp::message_create_t event, const std::string &msg, const int seconds)
+void send_and_delete_msg(dpp::cluster &bot, const dpp::message_create_t event, const std::string &msg, const int seconds)
 {
-    event.reply(msg, false,[&bot,seconds](const dpp::confirmation_callback_t &callback) {
+    event.reply(msg, false, [&bot, seconds](const dpp::confirmation_callback_t &callback)
+                {
         std::this_thread::sleep_for(std::chrono::seconds(seconds));
         if(callback.is_error()){
             return;
         }else{
             dpp::message need_del = callback.get<dpp::message>();
             bot.message_delete(need_del.id, need_del.channel_id);
-        }
-    });
+        } });
 }
 
 int gen_rand_int(const int min, const int max)
@@ -133,26 +133,20 @@ int main()
 
     bot.on_message_create([&bot, &main_what_db_vector](const dpp::message_create_t &event)
                           {
-        // change this after test to 730558450903547966
-        auto *yolocowow_ptr = dpp::find_user(dpp::snowflake(730558450903547966));
-        // change this after test to 818935243662557254
-        // auto *orcashamu = dpp::find_user(dpp::snowflake(818935243662557254));
-        if (yolocowow_ptr != nullptr) {
-            if (event.msg.author.id == yolocowow_ptr->id) {
-                bot.message_add_reaction(event.msg.id, event.msg.channel_id, dpp::unicode_emoji::dotted_line_face);
-                auto t_sdmsg = std::thread (send_and_delete_msg,std::ref(bot),event,"Change my whois name back to all lower case. -Thanks, Eason",2);
-                t_sdmsg.detach();
-            }
-        }
-        // Because Botnobi alreadly has a reaction, so I don't need to add another one.
-        // if (orcashamu != nullptr){
-        //     if (event.msg.author.id == orcashamu->id){
-        //         bot.message_add_reaction(event.msg.id, event.msg.channel_id, dpp::unicode_emoji::flushed_face);
-        //     }
-        // }
         if (event.msg.author.is_bot()) {
             return;
         }
+        // change dpp::snowflake() after test to 730558450903547966
+        if (event.msg.author.id == dpp::snowflake(730558450903547966ULL)) {
+            bot.message_add_reaction(event.msg.id, event.msg.channel_id, dpp::unicode_emoji::dotted_line_face);
+            auto t_sdmsg = std::thread (send_and_delete_msg,std::ref(bot),event,"Change my whois name back to all lower case. -Thanks, Eason",2);
+            t_sdmsg.detach();
+        }
+        // Because Botnobi alreadly has a reaction, so I don't need to add another one.
+        // change dpp::snowflake() after test to 818935243662557254
+        // if (event.msg.author.id == dpp::snowflake(818935243662557254ULL)){
+        //     bot.message_add_reaction(event.msg.id, event.msg.channel_id, dpp::unicode_emoji::flushed_face);
+        // }
         if (auto STOP = std::ifstream("STOP"); STOP.is_open()) {
             event.reply("STOP file detected, shutting down.");
             exit(0);
@@ -189,8 +183,7 @@ int main()
             }
         } else {
             add_what_msg(main_what_db_vector, event.msg.content, event.msg.channel_id, event.msg.guild_id);
-        }
-    });
+        } });
 
     bot.start(dpp::st_wait);
     return 0;
