@@ -72,7 +72,7 @@ jobs:
           mv x64_linux_cmake-release/bot bot-linux-x64
           mv src/what-bot-x64.service what-bot-x64.service
           mv src/install-x64.sh install-x64.sh
-          mv src/example_token.txt token.txt
+          mv src/token.env token.env
 
       - name: Create arch spicific tarball
         run: |
@@ -157,7 +157,7 @@ jobs:
           mv arm64_linux_cmake-release/bot bot-linux-arm64
           mv src/what-bot-arm64.service what-bot-arm64.service
           mv src/install-arm64.sh install-arm64.sh
-          mv src/example_token.txt token.txt
+          mv src/token.env token.env
 
       - name: Create arch spicific tarball
         run: |
@@ -243,7 +243,7 @@ jobs:
           mv arm64_linux_cmake-release/bot bot-linux-arm64
           mv src/what-bot-arm64.service what-bot-arm64.service
           mv src/install-arm64.sh install-arm64.sh
-          mv src/example_token.txt token.txt
+          mv src/token.env token.env
 
       - name: Create arch spicific tarball
         run: |
@@ -338,7 +338,7 @@ jobs:
           mv x64_linux_cmake-release/bot bot-linux-x64
           mv src/what-bot-x64.service what-bot-x64.service
           mv src/install-x64.sh install-x64.sh
-          mv src/example_token.txt token.txt
+          mv src/token.env token.env
 
       - name: Create arch spicific tarball
         run: |
@@ -433,7 +433,7 @@ jobs:
           mv x64_linux_cmake-release/bot bot-linux-x64
           mv src/what-bot-x64.service what-bot-x64.service
           mv src/install-x64.sh install-x64.sh
-          mv src/example_token.txt token.txt
+          mv src/token.env token.env
 
       - name: Create arch spicific tarball
         run: |
@@ -459,6 +459,7 @@ jobs:
         create-release-for-arm64-linux,
         create-release-for-arm64-linux-old,
         create-release-for-x64-linux-old,
+        create-release-for-x64-linux-old-old
       ]
     runs-on: ubuntu-latest
     permissions:

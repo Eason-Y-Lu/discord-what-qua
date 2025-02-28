@@ -42,7 +42,13 @@ std::string read_token()
     }
     else
     {
-        throw std::runtime_error("Failed to open token.txt, make sure it exists and is readable.");
+        std::string token = std::getenv("BOT_TOKEN");
+        if (token.empty())
+        {
+            std::cerr << "Token file not found and TOKEN environment variable not set." << std::endl;
+            exit(1);
+        }
+        return token;
     }
 }
 
