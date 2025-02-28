@@ -313,7 +313,7 @@ jobs:
           include-hidden-files: true
 
   build-x64-linux-release-old:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -330,7 +330,14 @@ jobs:
           test -f /usr/share/doc/kitware-archive-keyring/copyright || sudo rm /usr/share/keyrings/kitware-archive-keyring.gpg
           sudo apt-get install kitware-archive-keyring -y
           sudo apt-get full-upgrade -y --autoremove --purge
-          sudo apt-get -y install clang cmake ninja-build libstdc++-10-dev lld linux-libc-dev make build-essential curl zip unzip tar bash-completion pkg-config software-properties-common openssl libssl-dev
+          sudo apt-get -y install cmake ninja-build libstdc++-10-dev linux-libc-dev make build-essential curl zip unzip tar bash-completion pkg-config software-properties-common openssl libssl-dev
+
+      - name: Install llvm from upstream
+        run: |
+          cd ${{ github.workspace }}/../
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh all
 
       - name: Define VCPKG_ROOT environment variable
         run: |
@@ -349,7 +356,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{env.VCPKG_ROOT}}/**
-          key: ${{ runner.os }}-${{ runner.arch }}-22.04-vcpkg-${{env.CACHE_HASH}}
+          key: ${{ runner.os }}-${{ runner.arch }}-20.04-vcpkg-${{env.CACHE_HASH}}
 
       - name: Install vcpkg
         if: steps.cache-vcpkg.outputs.cache-hit != 'true'
@@ -387,7 +394,7 @@ jobs:
           path: ${{github.workspace}}/**
           retention-days: 1
           include-hidden-files: true
-  
+
   build-arm64-linux-old:
     runs-on: ubuntu-22.04-arm
 
