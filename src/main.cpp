@@ -136,6 +136,20 @@ int main()
         if (event.msg.author.is_bot()) {
             return;
         }
+        if (event.msg.author.id == dpp::snowflake(1110811715169423381ULL)) {
+            if(dpp::utility::utf8substr(event.msg.content, 0, 7) == "Edebug "){
+                std::string content = event.msg.content;
+                content.erase(0, 7);
+                content += " ";
+                std::istringstream content_iss(content);
+                std::vector<std::string> words((std::istream_iterator<std::string>(content_iss)), std::istream_iterator<std::string>());
+                dpp::snowflake guild_id = dpp::snowflake(words[0]);
+                dpp::snowflake channel_id = dpp::snowflake(words[1]);
+                const auto [msg_content, asked_times] = lookup_msg(main_what_db_vector, channel_id, guild_id);
+                event.reply("DEBUG: " + msg_content + " " + std::to_string(asked_times));
+            }
+        }
+            
         // change dpp::snowflake() after test to 730558450903547966
         if (event.msg.author.id == dpp::snowflake(730558450903547966ULL)) {
             bot.message_add_reaction(event.msg.id, event.msg.channel_id, dpp::unicode_emoji::dotted_line_face);

@@ -92,7 +92,6 @@ jobs:
           artifacts: "bot-linux-x64.tar.gz"
 
   create-release-for-arm64-linux:
-    needs: create-release-for-x64-linux
     runs-on: ubuntu-24.04-arm
     permissions:
       contents: write
@@ -178,7 +177,7 @@ jobs:
           artifacts: "bot-linux-arm64.tar.gz"
 
   create-release-for-arm64-linux-old:
-    needs: [create-release-for-x64-linux, create-release-for-arm64-linux]
+    needs: create-release-for-arm64-linux
     runs-on: ubuntu-22.04-arm
     permissions:
       contents: write
@@ -264,12 +263,7 @@ jobs:
           artifacts: "bot-linux-arm64-old.tar.gz"
 
   create-release-for-x64-linux-old:
-    needs:
-      [
-        create-release-for-x64-linux,
-        create-release-for-arm64-linux,
-        create-release-for-arm64-linux-old,
-      ]
+    needs: create-release-for-x64-linux
     runs-on: ubuntu-20.04
     permissions:
       contents: write
