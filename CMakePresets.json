@@ -18,7 +18,7 @@
         "CMAKE_C_COMPILER": "clang",
         "CMAKE_C_FLAGS": "-g -glldb -std=gnu17 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-command-line-argument -static-libgcc -static-libstdc++ -static-libgcc -static-libstdc++ -fuse-ld=lld -fPIC -fPIE -flto -fvisibility=hidden -fstack-protector-strong -fsanitize=undefined",
         "CMAKE_CXX_COMPILER": "clang++",
-        "CMAKE_CXX_FLAGS": "-g -glldb -std=gnu++23 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-command-line-argument -static-libgcc -static-libstdc++ -static-libgcc -static-libstdc++ -fuse-ld=lld -fPIC -fPIE -flto -fvisibility=hidden -fstack-protector-strong -fsanitize=undefined"
+        "CMAKE_CXX_FLAGS": "-g -glldb -std=gnu++20 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-command-line-argument -static-libgcc -static-libstdc++ -static-libgcc -static-libstdc++ -fuse-ld=lld -fPIC -fPIE -flto -fvisibility=hidden -fstack-protector-strong -fsanitize=undefined"
       }
     },
     {
@@ -30,7 +30,7 @@
         "CMAKE_C_COMPILER": "clang",
         "CMAKE_C_FLAGS": "-D_FORTIFY_SOURCE=3 -O3 -std=gnu17 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-command-line-argument -static-libgcc -static-libstdc++ -fuse-ld=lld -fPIC -fPIE -flto -fvisibility=hidden -fstack-protector-strong -fsanitize=undefined -Wl,--strip-all",
         "CMAKE_CXX_COMPILER": "clang++",
-        "CMAKE_CXX_FLAGS": "-D_FORTIFY_SOURCE=3 -O3 -std=gnu++23 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-command-line-argument -static-libgcc -static-libstdc++ -fuse-ld=lld -fPIC -fPIE -flto -fvisibility=hidden -fstack-protector-strong -fsanitize=undefined -Wl,--strip-all"
+        "CMAKE_CXX_FLAGS": "-D_FORTIFY_SOURCE=3 -O3 -std=gnu++20 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-command-line-argument -static-libgcc -static-libstdc++ -fuse-ld=lld -fPIC -fPIE -flto -fvisibility=hidden -fstack-protector-strong -fsanitize=undefined -Wl,--strip-all"
       }
     },
     {
@@ -42,7 +42,7 @@
         "CMAKE_C_COMPILER": "clang",
         "CMAKE_C_FLAGS": "-D_FORTIFY_SOURCE=3 -Oz -std=gnu17 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-command-line-argument -static-libgcc -static-libstdc++ -fuse-ld=lld -fPIC -fPIE -flto -fvisibility=hidden -fstack-protector-strong -fsanitize=undefined -Wl,--strip-all",
         "CMAKE_CXX_COMPILER": "clang++",
-        "CMAKE_CXX_FLAGS": "-D_FORTIFY_SOURCE=3 -Oz -std=gnu++23 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-command-line-argument -static-libgcc -static-libstdc++ -fuse-ld=lld -fPIC -fPIE -flto -fvisibility=hidden -fstack-protector-strong -fsanitize=undefined -Wl,--strip-all"
+        "CMAKE_CXX_FLAGS": "-D_FORTIFY_SOURCE=3 -Oz -std=gnu++20 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-command-line-argument -static-libgcc -static-libstdc++ -fuse-ld=lld -fPIC -fPIE -flto -fvisibility=hidden -fstack-protector-strong -fsanitize=undefined -Wl,--strip-all"
       }
     },
     {
