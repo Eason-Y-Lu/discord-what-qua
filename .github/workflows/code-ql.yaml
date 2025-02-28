@@ -57,7 +57,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{env.VCPKG_ROOT}}/**
-          key: ${{ runner.os }}-${{ runner.arch }}-vcpkg-${{env.CACHE_HASH}}
+          key: ${{ runner.os }}-${{ runner.arch }}-latest-vcpkg-${{env.CACHE_HASH}}
 
       - name: Install vcpkg
         if: steps.cache-vcpkg.outputs.cache-hit != 'true'
