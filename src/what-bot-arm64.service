@@ -6,7 +6,7 @@ Wants=network-online.target
 [Service]
 Restart=on-failure
 Type=simple
-ExecStart=/usr/local/bin/what-bot/what-bot-arm64
+ExecStart=/usr/local/bin/what-bot/bot-linux-arm64
 KillSignal=SIGINT
 EnvironmentFile=/usr/local/bin/what-bot/token.env
 
