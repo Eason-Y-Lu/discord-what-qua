@@ -8,8 +8,9 @@
 
 Prerequisites packages: - openssl - glibc
 Determine which version of the tarball to download from the release page.
-Tarball with `-old` has compatibility with glibc shipped with ubuntu 20.04 on amd64, and 22.04 on arm64.
-Tarball without `-old` has compatibility with glibc shipped with ubuntu 24.04 on amd64, and 24.04 on arm64.
+Tarballs with the suffix `-old-old` targets ubuntu 20.04 which need openssl v1.It does not support arm64.
+Tarballs with the suffix `-old` targets ubuntu 22.04 which need openssl v3. It supports arm64.
+Tarballs without the suffix targets ubuntu 24.04 which need openssl v3. It supports arm64.
 After untar the tarball, you will need to change the token.txt to your bot token.
 Then make the install script executable and run it with sudo (Please make sure to check the content of the script before running it with sudo).
 

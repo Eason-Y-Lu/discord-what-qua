@@ -312,7 +312,7 @@ jobs:
           retention-days: 1
           include-hidden-files: true
 
-  build-x64-linux-old:
+  build-x64-linux-old-old:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout repository
@@ -382,7 +382,7 @@ jobs:
         if: ${{ success() }}
         uses: actions/upload-artifact@v4
         with:
-          name: x64-linux-old-bin
+          name: x64-linux-old-old-bin
           compression-level: 9
           path: x64_linux_cmake-release/bot
           retention-days: 1
@@ -391,7 +391,7 @@ jobs:
         if: ${{ failure() }}
         uses: actions/upload-artifact@v4
         with:
-          name: x64-linux-old-src
+          name: x64-linux-old-old-src
           compression-level: 9
           path: ${{github.workspace}}/**
           retention-days: 1
