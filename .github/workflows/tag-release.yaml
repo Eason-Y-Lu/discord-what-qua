@@ -473,9 +473,21 @@ jobs:
           submodules: "recursive"
 
       - name: Create release for general assets and update to full release
+        if: startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, '-rc')
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
           draft: false
           bodyFile: "CHANGELOG.md"
           artifacts: "Install.md"
+          makeLatest: true
+
+      - name: Create release for general assets and update to rc release
+        if: startsWith(github.ref, 'refs/tags/v') && contains(github.ref, '-rc')
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          draft: false
+          bodyFile: "CHANGELOG.md"
+          artifacts: "Install.md"
+          prerelease: true
