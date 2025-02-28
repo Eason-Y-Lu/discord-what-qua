@@ -76,7 +76,7 @@ jobs:
 
       - name: Create arch spicific tarball
         run: |
-          tar -czf bot-linux-x64.tar.gz bot-linux-x64 what-bot-x64.service install-x64.sh token.txt
+          tar -czf bot-linux-x64.tar.gz bot-linux-x64 what-bot-x64.service install-x64.sh token.env
 
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v2
@@ -161,7 +161,7 @@ jobs:
 
       - name: Create arch spicific tarball
         run: |
-          tar -czf bot-linux-arm64.tar.gz bot-linux-arm64 what-bot-arm64.service install-arm64.sh token.txt
+          tar -czf bot-linux-arm64.tar.gz bot-linux-arm64 what-bot-arm64.service install-arm64.sh token.env
 
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v2
@@ -247,7 +247,7 @@ jobs:
 
       - name: Create arch spicific tarball
         run: |
-          tar -czf bot-linux-arm64-old.tar.gz bot-linux-arm64 what-bot-arm64.service install-arm64.sh token.txt
+          tar -czf bot-linux-arm64-old.tar.gz bot-linux-arm64 what-bot-arm64.service install-arm64.sh token.env
 
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v2
@@ -342,7 +342,7 @@ jobs:
 
       - name: Create arch spicific tarball
         run: |
-          tar -czf bot-linux-x64-old-old.tar.gz bot-linux-x64 what-bot-x64.service install-x64.sh token.txt
+          tar -czf bot-linux-x64-old-old.tar.gz bot-linux-x64 what-bot-x64.service install-x64.sh token.env
 
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v2
@@ -437,7 +437,7 @@ jobs:
 
       - name: Create arch spicific tarball
         run: |
-          tar -czf bot-linux-x64-old.tar.gz bot-linux-x64 what-bot-x64.service install-x64.sh token.txt
+          tar -czf bot-linux-x64-old.tar.gz bot-linux-x64 what-bot-x64.service install-x64.sh token.env
 
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v2
