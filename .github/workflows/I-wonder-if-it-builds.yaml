@@ -338,6 +338,8 @@ jobs:
           wget https://apt.llvm.org/llvm.sh
           chmod +x llvm.sh
           sudo ./llvm.sh all
+          sudo ln -s -f /usr/bin/clang-18 /usr/bin/clang
+          sudo ln -s -f /usr/bin/clang++-18 /usr/bin/clang++
 
       - name: Define VCPKG_ROOT environment variable
         run: |
