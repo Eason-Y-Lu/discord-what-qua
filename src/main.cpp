@@ -42,7 +42,8 @@ std::string read_token() {
             std::cerr << "Token file not found and BOT_TOKEN not set." << std::endl;
             exit(1);
         }
-        return token;
+        std::string token_str(token);
+        return token_str;
     }
 }
 
