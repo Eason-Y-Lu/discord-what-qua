@@ -10,41 +10,35 @@
 #include <openssl/err.h>
 #include "ins.h"
 
-void send_and_delete_msg(dpp::cluster &bot, const dpp::message_create_t event, const std::string &msg, const int seconds)
-{
-    event.reply(msg, false, [&bot, seconds](const dpp::confirmation_callback_t &callback)
-                {
+void send_and_delete_msg(dpp::cluster &bot, const dpp::message_create_t &event, const std::string &msg,
+                         const int seconds) {
+    event.reply(msg, false, [&bot, seconds](const dpp::confirmation_callback_t &callback) {
         std::this_thread::sleep_for(std::chrono::seconds(seconds));
-        if(callback.is_error()){
+        if (callback.is_error()) {
             return;
-        }else{
-            dpp::message need_del = callback.get<dpp::message>();
+        } else {
+            const auto need_del = callback.get<dpp::message>();
             bot.message_delete(need_del.id, need_del.channel_id);
-        } });
+        }
+    });
 }
 
-int gen_rand_int(const int min, const int max)
-{
+int gen_rand_int(const int min, const int max) {
     unsigned char buffer[4];
     RAND_bytes(buffer, 4);
     const unsigned int num = *reinterpret_cast<unsigned int *>(buffer);
     return min + (num % (max - min));
 }
 
-std::string read_token()
-{
-    if (std::ifstream token_file("token.txt"); token_file.is_open())
-    {
+std::string read_token() {
+    if (std::ifstream token_file("token.txt"); token_file.is_open()) {
         std::string token;
         std::getline(token_file, token);
         token_file.close();
         return token;
-    }
-    else
-    {
+    } else {
         std::string token = std::getenv("BOT_TOKEN");
-        if (token.empty())
-        {
+        if (token.empty()) {
             std::cerr << "Token file not found and TOKEN environment variable not set." << std::endl;
             exit(1);
         }
@@ -52,37 +46,29 @@ std::string read_token()
     }
 }
 
-struct struct_what_data
-{
+struct struct_what_data {
     std::string msg_content;
     int asked_times;
     dpp::snowflake channel_id;
 };
 
-struct what_db_data
-{
+struct what_db_data {
     std::vector<struct_what_data> what_data_blob;
     dpp::snowflake guild_id;
 };
 
-struct what_data_query
-{
+struct what_data_query {
     std::string msg_content;
     int asked_times;
 };
 
 void add_what_msg(std::vector<what_db_data> &ingress_what_db, const std::string &ingress_msg_content,
                   const dpp::snowflake ingress_channel_id,
-                  const dpp::snowflake ingress_guild_id)
-{
-    for (auto &[what_data_blob, egress_guild_id] : ingress_what_db)
-    {
-        if (ingress_guild_id == egress_guild_id)
-        {
-            for (auto &[egress_msg_content, egress_asked_times, egress_channel_id] : what_data_blob)
-            {
-                if (ingress_channel_id == egress_channel_id)
-                {
+                  const dpp::snowflake ingress_guild_id) {
+    for (auto &[what_data_blob, egress_guild_id]: ingress_what_db) {
+        if (ingress_guild_id == egress_guild_id) {
+            for (auto &[egress_msg_content, egress_asked_times, egress_channel_id]: what_data_blob) {
+                if (ingress_channel_id == egress_channel_id) {
                     egress_msg_content = ingress_msg_content;
                     egress_asked_times = 0;
                     return;
@@ -95,27 +81,20 @@ void add_what_msg(std::vector<what_db_data> &ingress_what_db, const std::string 
     }
     const struct_what_data ingress_struct_what_data = {ingress_msg_content, 0, ingress_channel_id};
     const what_db_data ingress_what_db_data = {
-        std::vector<struct_what_data>{ingress_struct_what_data}, ingress_guild_id};
+        std::vector<struct_what_data>{ingress_struct_what_data}, ingress_guild_id
+    };
     ingress_what_db.push_back(ingress_what_db_data);
 }
 
 what_data_query lookup_msg(std::vector<what_db_data> &ingress_what_db, const dpp::snowflake ingress_channel_id,
-                           const dpp::snowflake ingress_guild_id)
-{
-    for (auto &[what_data_blob, egress_guild_id] : ingress_what_db)
-    {
-        if (ingress_guild_id == egress_guild_id)
-        {
-            for (auto &[egress_msg_content, egress_asked_times, egress_channel_id] : what_data_blob)
-            {
-                if (ingress_channel_id == egress_channel_id)
-                {
-                    if (egress_asked_times <= 4)
-                    {
+                           const dpp::snowflake ingress_guild_id) {
+    for (auto &[what_data_blob, egress_guild_id]: ingress_what_db) {
+        if (ingress_guild_id == egress_guild_id) {
+            for (auto &[egress_msg_content, egress_asked_times, egress_channel_id]: what_data_blob) {
+                if (ingress_channel_id == egress_channel_id) {
+                    if (egress_asked_times <= 4) {
                         egress_asked_times++;
-                    }
-                    else
-                    {
+                    } else {
                         egress_asked_times = 5;
                     }
                     return {egress_msg_content, egress_asked_times};
@@ -126,40 +105,40 @@ what_data_query lookup_msg(std::vector<what_db_data> &ingress_what_db, const dpp
     return {"I don't know.", 0};
 }
 
-int main()
-{
+int main() {
     std::vector<what_db_data> main_what_db_vector = {};
     dpp::cluster bot(read_token(), dpp::i_all_intents);
     bot.on_log(dpp::utility::cout_logger());
 
-    bot.on_ready([&bot](const dpp::ready_t &event)
-                 {
+    bot.on_ready([&bot](const dpp::ready_t &event) {
         bot.log(dpp::loglevel::ll_info, "Logged in as " + bot.me.username);
-        bot.log(dpp::loglevel::ll_info, "Bot ID is " + bot.me.id.str()); });
+        bot.log(dpp::loglevel::ll_info, "Bot ID is " + bot.me.id.str());
+    });
 
-    bot.on_message_create([&bot, &main_what_db_vector](const dpp::message_create_t &event)
-                          {
+    bot.on_message_create([&bot, &main_what_db_vector](const dpp::message_create_t &event) {
         if (event.msg.author.is_bot()) {
             return;
         }
         if (event.msg.author.id == dpp::snowflake(1110811715169423381ULL)) {
-            if(dpp::utility::utf8substr(event.msg.content, 0, 7) == "Edebug "){
+            if (dpp::utility::utf8substr(event.msg.content, 0, 7) == "Edebug ") {
                 std::string content = event.msg.content;
                 content.erase(0, 7);
                 content += " ";
                 std::istringstream content_iss(content);
-                std::vector<std::string> words((std::istream_iterator<std::string>(content_iss)), std::istream_iterator<std::string>());
-                dpp::snowflake guild_id = dpp::snowflake(words[0]);
-                dpp::snowflake channel_id = dpp::snowflake(words[1]);
+                std::vector<std::string> words((std::istream_iterator<std::string>(content_iss)),
+                                               std::istream_iterator<std::string>());
+                auto guild_id = dpp::snowflake(words[0]);
+                auto channel_id = dpp::snowflake(words[1]);
                 const auto [msg_content, asked_times] = lookup_msg(main_what_db_vector, channel_id, guild_id);
                 event.reply("DEBUG: " + msg_content + " " + std::to_string(asked_times));
             }
         }
-            
+
         // change dpp::snowflake() after test to 730558450903547966
         if (event.msg.author.id == dpp::snowflake(730558450903547966ULL)) {
             bot.message_add_reaction(event.msg.id, event.msg.channel_id, dpp::unicode_emoji::dotted_line_face);
-            auto t_sdmsg = std::thread (send_and_delete_msg,std::ref(bot),event,"Change my whois name back to all lower case. -Thanks, Eason",2);
+            auto t_sdmsg = std::thread(send_and_delete_msg, std::ref(bot), event,
+                                       "Change my whois name back to all lower case. -Thanks, Eason", 2);
             t_sdmsg.detach();
         }
         // Because Botnobi alreadly has a reaction, so I don't need to add another one.
@@ -203,7 +182,8 @@ int main()
             }
         } else {
             add_what_msg(main_what_db_vector, event.msg.content, event.msg.channel_id, event.msg.guild_id);
-        } });
+        }
+    });
 
     bot.start(dpp::st_wait);
     return 0;

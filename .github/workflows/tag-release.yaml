@@ -453,14 +453,11 @@ jobs:
           artifacts: "bot-linux-x64-old.tar.gz"
 
   add-general-assets-to-release:
-    needs:
-      [
-        create-release-for-x64-linux,
-        create-release-for-arm64-linux,
-        create-release-for-arm64-linux-old,
-        create-release-for-x64-linux-old,
-        create-release-for-x64-linux-old-old
-      ]
+    needs: [ create-release-for-x64-linux,
+             create-release-for-arm64-linux,
+             create-release-for-arm64-linux-old,
+             create-release-for-x64-linux-old,
+             create-release-for-x64-linux-old-old ]
     runs-on: ubuntu-latest
     permissions:
       contents: write
