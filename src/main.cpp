@@ -37,9 +37,9 @@ std::string read_token() {
         token_file.close();
         return token;
     } else {
-        std::string token = std::getenv("BOT_TOKEN");
-        if (token.empty()) {
-            std::cerr << "Token file not found and TOKEN environment variable not set." << std::endl;
+        char *token = std::getenv("BOT_TOKEN");
+        if (token == nullptr) {
+            std::cerr << "Token file not found and BOT_TOKEN not set." << std::endl;
             exit(1);
         }
         return token;
