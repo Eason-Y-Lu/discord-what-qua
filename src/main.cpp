@@ -9,6 +9,7 @@
 #include <openssl/rand.h>
 #include <openssl/err.h>
 #include "ins.h"
+#include <csignal>
 
 void send_and_delete_msg(dpp::cluster &bot, const dpp::message_create_t &event, const std::string &msg,
                          const int seconds) {
@@ -106,7 +107,14 @@ what_data_query lookup_msg(std::vector<what_db_data> &ingress_what_db, const dpp
     return {"I don't know.", 0};
 }
 
+void endSignalHandler(int sig) {
+    std::printf("Received SIGINT, shutting down ...\n");
+    std::printf("The operating system will handle the cleanup of the process.\n");
+    exit(0);
+}
+
 int main() {
+    std::signal(SIGINT, endSignalHandler);
     std::vector<what_db_data> main_what_db_vector = {};
     dpp::cluster bot(read_token(), dpp::i_all_intents);
     bot.on_log(dpp::utility::cout_logger());
