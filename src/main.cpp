@@ -161,7 +161,7 @@ int main() {
         }
         std::string content = event.msg.content;
         std::ranges::transform(content, content.begin(), ::tolower);
-        if (content == "what" || content == "what?") {
+        if (content == "what" || content == "what?" || content == "juyoo") {
             switch (const auto [msg_content, asked_times] = lookup_msg(main_what_db_vector, event.msg.channel_id,
                                                                        event.msg.guild_id); asked_times) {
                 default:
