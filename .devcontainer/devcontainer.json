@@ -1,7 +1,0 @@
-{
-	"name": "C++",
-	"build": {
-		"dockerfile": "Containerfile"
-	},
-	"postCreateCommand": "echo 'Remember to run apt.sh in scripts/'"
-}
