@@ -6,7 +6,8 @@
       "hidden": true,
       "generator": "Ninja",
       "cacheVariables": {
-        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": true
       }
     },
     {
@@ -70,24 +71,6 @@
       "binaryDir": "${sourceDir}/x64_linux_cmake-minsize",
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": "x64-linux"
-      }
-    },
-    {
-      "name": "arm64-linux-debug",
-      "displayName": "Debug for Linux-arm64",
-      "inherits": "debug-linux",
-      "binaryDir": "${sourceDir}/arm64_linux_cmake-debug",
-      "cacheVariables": {
-        "VCPKG_TARGET_TRIPLET": "arm64-linux"
-      }
-    },
-    {
-      "name": "arm64-linux-release",
-      "displayName": "Release for Linux-arm64 (speed optimized)",
-      "inherits": "release-linux",
-      "binaryDir": "${sourceDir}/arm64_linux_cmake-release",
-      "cacheVariables": {
-        "VCPKG_TARGET_TRIPLET": "arm64-linux-release"
       }
     }
   ]

@@ -213,3 +213,7 @@ x64_linux_cmake-minsize/
 x64_linux_cmake-release/
 arm64_linux_cmake-debug/
 arm64-linux-release/
+
+## clangd
+.cache/
+compile_commands.json
