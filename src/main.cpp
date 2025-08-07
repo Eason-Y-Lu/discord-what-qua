@@ -17,17 +17,23 @@ int gen_rand_int(const int min, const int max) {
 }
 
 std::string read_token() {
-  if (std::ifstream token_file("token.txt"); token_file.is_open()) {
-    std::string token;
-    std::getline(token_file, token);
-    token_file.close();
-    return token;
-  } else {
-    char *token = std::getenv("BOT_TOKEN");
-    if (token == nullptr) {
+  char *token = std::getenv("BOT_TOKEN");
+  if (token == nullptr || std::string(token).empty()) {
+    if (std::ifstream token_file("token.txt"); token_file.is_open()) {
+      std::string token;
+      std::getline(token_file, token);
+      token_file.close();
+      if (token.empty()) {
+        std::cerr << "Token file is empty." << std::endl;
+        exit(1);
+      } else {
+        return token;
+      }
+    } else {
       std::cerr << "Token file not found and BOT_TOKEN not set." << std::endl;
       exit(1);
     }
+  } else {
     std::string token_str(token);
     return token_str;
   }
@@ -181,40 +187,47 @@ int main() {
     std::string content = event.msg.content;
     std::ranges::transform(content, content.begin(), ::tolower);
     std::lock_guard<std::mutex> lock(on_message_received_mutex);
-    if (content == "what" || content == "what?" || content == "qua") {
-      switch (const auto [msg_content, asked_times] =
-                  lookup_msg(main_what_db_vector, event.msg.channel_id,
-                             event.msg.guild_id, event.msg.author.id);
-              asked_times) {
-      default:
-        event.reply(
-            "This is not supposed to happen, notify <@1110811715169423381>");
-        bot.log(
-            dpp::loglevel::ll_error,
-            "This is not supposed to happen, notify <@1110811715169423381>");
-        bot.log(dpp::loglevel::ll_error,
-                "You can also email him at: aelnosu@outlook.com");
-        break;
-      case 0:
-        event.reply(msg_content);
-        break;
-      case 1:
-        event.reply(msg_content);
-        break;
-      case 2:
-        event.reply("### " + msg_content);
-        break;
-      case 3:
-        event.reply("## " + msg_content);
-        break;
-      case 4:
-        event.reply("# " + msg_content);
-        break;
-      case 5:
-        const int random_insult_index =
-            gen_rand_int(0, static_cast<int>(insults.size()));
-        event.reply("# " + insults[random_insult_index]);
-        break;
+    if (content == "what" || content == "what?" || content == "qua" ||
+        content == "qua?" || content == "w:info") {
+      if (content == "w:info") {
+        event.reply("This bot is created by aelnosu, licensed under the "
+                    "`BSD-3-Clause-No-Nuclear-License-2014`.\nThe code can be "
+                    "found at https://github.com/Eason-Y-Lu/discord-what-qua.");
+      } else {
+        switch (const auto [msg_content, asked_times] =
+                    lookup_msg(main_what_db_vector, event.msg.channel_id,
+                               event.msg.guild_id, event.msg.author.id);
+                asked_times) {
+        default:
+          event.reply(
+              "This is not supposed to happen, notify <@1110811715169423381>");
+          bot.log(
+              dpp::loglevel::ll_error,
+              "This is not supposed to happen, notify <@1110811715169423381>");
+          bot.log(dpp::loglevel::ll_error,
+                  "You can also email him at: aelnosu@outlook.com");
+          break;
+        case 0:
+          event.reply(msg_content);
+          break;
+        case 1:
+          event.reply(msg_content);
+          break;
+        case 2:
+          event.reply("### " + msg_content);
+          break;
+        case 3:
+          event.reply("## " + msg_content);
+          break;
+        case 4:
+          event.reply("# " + msg_content);
+          break;
+        case 5:
+          const int random_insult_index =
+              gen_rand_int(0, static_cast<int>(insults.size()));
+          event.reply("# " + insults[random_insult_index]);
+          break;
+        }
       }
     } else {
       add_message_to_db(event.msg.guild_id, event.msg.channel_id,

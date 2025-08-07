@@ -207,7 +207,6 @@ prefab/
 ## Other ignores
 build/
 .vscode/
-src/token.txt
 x64_linux_cmake-debug/
 x64_linux_cmake-minsize/
 x64_linux_cmake-release/
