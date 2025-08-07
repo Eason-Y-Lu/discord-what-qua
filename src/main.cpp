@@ -178,9 +178,9 @@ int main() {
       event.reply("STOP file detected, shutting down.");
       exit(0);
     }
-    std::lock_guard<std::mutex> lock(on_message_received_mutex);
     std::string content = event.msg.content;
     std::ranges::transform(content, content.begin(), ::tolower);
+    std::lock_guard<std::mutex> lock(on_message_received_mutex);
     if (content == "what" || content == "what?" || content == "qua") {
       switch (const auto [msg_content, asked_times] =
                   lookup_msg(main_what_db_vector, event.msg.channel_id,

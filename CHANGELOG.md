@@ -1,5 +1,6 @@
-Support for systemd service files
+Rework message handling system.
 
-This release adds support for systemd service files.
-However, journalctl is not supported yet.
-Read the Install.md file for more information.
+Rework so when looking data up it reply the last message not sent by the user.
+It also ignores messages sent by any bot.
+It added mutex to slow down the speed of the bot.
+It dropped all arm support.
