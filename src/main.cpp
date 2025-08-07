@@ -1,15 +1,13 @@
 // SPDX-License-Identifier: BSD-3-Clause-No-Nuclear-License-2014
 #include "ins.h"
-#include <chrono>
 #include <csignal>
 #include <dpp/dpp.h>
-#include <dpp/unicode_emoji.h>
 #include <fstream>
+#include <mutex>
 #include <openssl/err.h>
 #include <openssl/rand.h>
-#include <ranges>
 #include <string>
-#include <thread>
+#include <vector>
 
 int gen_rand_int(const int min, const int max) {
   unsigned char buffer[4];
@@ -35,64 +33,115 @@ std::string read_token() {
   }
 }
 
-struct struct_what_data {
-  std::string msg_content;
+std::mutex on_message_received_mutex;
+
+struct what_message_blob {
+  dpp::snowflake author_id;
   int asked_times;
+  std::string message;
+};
+
+struct what_channel_blob {
   dpp::snowflake channel_id;
+  what_message_blob message_1;
+  what_message_blob message_2;
 };
 
-struct what_db_data {
-  std::vector<struct_what_data> what_data_blob;
-  dpp::snowflake guild_id;
+struct what_server_blob {
+  dpp::snowflake server_id;
+  std::vector<what_channel_blob> channel_data;
 };
 
-struct what_data_query {
-  std::string msg_content;
-  int asked_times;
-};
-
-void add_what_msg(std::vector<what_db_data> &ingress_what_db,
-                  const std::string &ingress_msg_content,
-                  const dpp::snowflake ingress_channel_id,
-                  const dpp::snowflake ingress_guild_id) {
-  for (auto &[what_data_blob, egress_guild_id] : ingress_what_db) {
-    if (ingress_guild_id == egress_guild_id) {
-      for (auto &[egress_msg_content, egress_asked_times, egress_channel_id] :
-           what_data_blob) {
-        if (ingress_channel_id == egress_channel_id) {
-          egress_msg_content = ingress_msg_content;
-          egress_asked_times = 0;
-          return;
+void add_message_to_db(const dpp::snowflake guild_id,
+                       const dpp::snowflake channel_id,
+                       const dpp::snowflake author_id,
+                       const std::string &message,
+                       std::vector<what_server_blob> &main_what_db_vector) {
+  for (auto &[server_id, channel_data] : main_what_db_vector) {
+    if (server_id == guild_id) {
+      for (auto &[channel_id_in_db, message_1, message_2] : channel_data) {
+        if (channel_id_in_db == channel_id) {
+          // if author is already in either message_1 or message_2, update the
+          // message if author is not in either message_1 or message_2,
+          if (message_1.author_id == author_id) {
+            message_1.message = message;
+            message_1.asked_times = 0;
+            return;
+          } else if (message_2.author_id == author_id) {
+            message_2.message = message;
+            message_2.asked_times = 0;
+            return;
+          } else {
+            message_2 = message_1;
+            message_1.author_id = author_id;
+            message_1.message = message;
+            message_1.asked_times = 0;
+            return;
+          }
         }
       }
-      const struct_what_data egress_struct_what_data = {ingress_msg_content, 0,
-                                                        ingress_channel_id};
-      what_data_blob.push_back(egress_struct_what_data);
+      // if channel not found, add a new channel
+      what_channel_blob new_channel;
+      new_channel.channel_id = channel_id;
+      new_channel.message_1.author_id = author_id;
+      new_channel.message_1.message = message;
+      new_channel.message_1.asked_times = 0;
+      new_channel.message_2.author_id = 0; // no second message
+      new_channel.message_2.message = "";
+      new_channel.message_2.asked_times = 0;
+      channel_data.push_back(new_channel);
       return;
     }
   }
-  const struct_what_data ingress_struct_what_data = {ingress_msg_content, 0,
-                                                     ingress_channel_id};
-  const what_db_data ingress_what_db_data = {
-      std::vector<struct_what_data>{ingress_struct_what_data},
-      ingress_guild_id};
-  ingress_what_db.push_back(ingress_what_db_data);
+  // if server not found, add a new server
+  what_server_blob new_server;
+  new_server.server_id = guild_id;
+  what_channel_blob new_channel;
+  new_channel.channel_id = channel_id;
+  new_channel.message_1.author_id = author_id;
+  new_channel.message_1.message = message;
+  new_channel.message_1.asked_times = 0;
+  new_channel.message_2.author_id = 0; // no second message
+  new_channel.message_2.message = "";
+  new_channel.message_2.asked_times = 0;
+  new_server.channel_data.push_back(new_channel);
+  main_what_db_vector.push_back(new_server);
 }
 
-what_data_query lookup_msg(std::vector<what_db_data> &ingress_what_db,
-                           const dpp::snowflake ingress_channel_id,
-                           const dpp::snowflake ingress_guild_id) {
-  for (auto &[what_data_blob, egress_guild_id] : ingress_what_db) {
-    if (ingress_guild_id == egress_guild_id) {
-      for (auto &[egress_msg_content, egress_asked_times, egress_channel_id] :
-           what_data_blob) {
-        if (ingress_channel_id == egress_channel_id) {
-          if (egress_asked_times <= 4) {
-            egress_asked_times++;
+struct lookup_result {
+  std::string message_content;
+  int asked_times;
+};
+
+lookup_result lookup_msg(std::vector<what_server_blob> &main_what_db_vector,
+                         const dpp::snowflake channel_id,
+                         const dpp::snowflake guild_id,
+                         const dpp::snowflake author_id) {
+  for (auto &server_blob : main_what_db_vector) {
+    if (server_blob.server_id == guild_id) {
+      for (auto &channel_blob : server_blob.channel_data) {
+        if (channel_blob.channel_id == channel_id) {
+          if (channel_blob.message_1.author_id == author_id &&
+              channel_blob.message_2.author_id != 0) {
+            channel_blob.message_2.asked_times++;
+            return {channel_blob.message_2.message,
+                    channel_blob.message_2.asked_times};
+          } else if (channel_blob.message_2.author_id == author_id &&
+                     channel_blob.message_1.author_id != 0) {
+            channel_blob.message_1.asked_times++;
+            return {channel_blob.message_1.message,
+                    channel_blob.message_1.asked_times};
+          } else if (channel_blob.message_1.author_id == author_id &&
+                     channel_blob.message_2.author_id == 0) {
+            return {"I don't know.", 0};
+          } else if (channel_blob.message_2.author_id == author_id &&
+                     channel_blob.message_1.author_id == 0) {
+            return {"I don't know.", 0};
           } else {
-            egress_asked_times = 5;
+            channel_blob.message_1.asked_times++;
+            return {channel_blob.message_1.message,
+                    channel_blob.message_1.asked_times};
           }
-          return {egress_msg_content, egress_asked_times};
         }
       }
     }
@@ -107,9 +156,12 @@ void endSignalHandler(int sig) {
 }
 
 int main() {
+  std::vector<what_server_blob> *main_what_db_vector_ptr =
+      new std::vector<what_server_blob>();
+  std::vector<what_server_blob> &main_what_db_vector = *main_what_db_vector_ptr;
   std::signal(SIGINT, endSignalHandler);
-  std::vector<what_db_data> main_what_db_vector = {};
-  dpp::cluster bot(read_token(), dpp::i_all_intents);
+  dpp::cluster bot(read_token(),
+                   dpp::i_guild_messages | dpp::i_message_content);
   bot.on_log(dpp::utility::cout_logger());
 
   bot.on_ready([&bot](const dpp::ready_t &event) {
@@ -122,49 +174,17 @@ int main() {
     if (event.msg.author.is_bot()) {
       return;
     }
-    if (event.msg.author.id == dpp::snowflake(1110811715169423381ULL)) {
-      if (dpp::utility::utf8substr(event.msg.content, 0, 7) == "Edebug ") {
-        std::string content = event.msg.content;
-        content.erase(0, 7);
-        content += " ";
-        std::istringstream content_iss(content);
-        std::vector<std::string> words(
-            (std::istream_iterator<std::string>(content_iss)),
-            std::istream_iterator<std::string>());
-        auto guild_id = dpp::snowflake(words[0]);
-        auto channel_id = dpp::snowflake(words[1]);
-        const auto [msg_content, asked_times] =
-            lookup_msg(main_what_db_vector, channel_id, guild_id);
-        event.reply("DEBUG: " + msg_content + " " +
-                    std::to_string(asked_times));
-      }
-    }
-
-    // change dpp::snowflake() after test to 730558450903547966
-    if (event.msg.author.id == dpp::snowflake(730558450903547966ULL)) {
-      bot.message_add_reaction(event.msg.id, event.msg.channel_id,
-                               dpp::unicode_emoji::dotted_line_face);
-      auto t_sdmsg = std::thread(
-          send_and_delete_msg, std::ref(bot), event,
-          "Change my whois name back to all lower case. -Thanks, Eason", 2);
-      t_sdmsg.detach();
-    }
-    // Because Botnobi alreadly has a reaction, so I don't need to add another
-    // one. change dpp::snowflake() after test to 818935243662557254 if
-    // (event.msg.author.id == dpp::snowflake(818935243662557254ULL)){
-    //     bot.message_add_reaction(event.msg.id, event.msg.channel_id,
-    //     dpp::unicode_emoji::flushed_face);
-    // }
     if (auto STOP = std::ifstream("STOP"); STOP.is_open()) {
       event.reply("STOP file detected, shutting down.");
       exit(0);
     }
+    std::lock_guard<std::mutex> lock(on_message_received_mutex);
     std::string content = event.msg.content;
     std::ranges::transform(content, content.begin(), ::tolower);
-    if (content == "what" || content == "what?" || content == "juyoo") {
+    if (content == "what" || content == "what?" || content == "qua") {
       switch (const auto [msg_content, asked_times] =
                   lookup_msg(main_what_db_vector, event.msg.channel_id,
-                             event.msg.guild_id);
+                             event.msg.guild_id, event.msg.author.id);
               asked_times) {
       default:
         event.reply(
@@ -197,8 +217,9 @@ int main() {
         break;
       }
     } else {
-      add_what_msg(main_what_db_vector, event.msg.content, event.msg.channel_id,
-                   event.msg.guild_id);
+      add_message_to_db(event.msg.guild_id, event.msg.channel_id,
+                        event.msg.author.id, event.msg.content,
+                        main_what_db_vector);
     }
   });
 
