@@ -129,12 +129,16 @@ lookup_result lookup_msg(std::vector<what_server_blob> &main_what_db_vector,
         if (channel_blob.channel_id == channel_id) {
           if (channel_blob.message_1.author_id == author_id &&
               channel_blob.message_2.author_id != 0) {
-            channel_blob.message_2.asked_times++;
+            if (channel_blob.message_2.asked_times < 5) {
+              channel_blob.message_2.asked_times++;
+            }
             return {channel_blob.message_2.message,
                     channel_blob.message_2.asked_times};
           } else if (channel_blob.message_2.author_id == author_id &&
                      channel_blob.message_1.author_id != 0) {
-            channel_blob.message_1.asked_times++;
+            if (channel_blob.message_2.asked_times < 5) {
+              channel_blob.message_1.asked_times++;
+            }
             return {channel_blob.message_1.message,
                     channel_blob.message_1.asked_times};
           } else if (channel_blob.message_1.author_id == author_id &&
@@ -144,7 +148,9 @@ lookup_result lookup_msg(std::vector<what_server_blob> &main_what_db_vector,
                      channel_blob.message_1.author_id == 0) {
             return {"I don't know.", 0};
           } else {
-            channel_blob.message_1.asked_times++;
+            if (channel_blob.message_2.asked_times < 5) {
+              channel_blob.message_1.asked_times++;
+            }
             return {channel_blob.message_1.message,
                     channel_blob.message_1.asked_times};
           }

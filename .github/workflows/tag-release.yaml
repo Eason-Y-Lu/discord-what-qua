@@ -92,7 +92,6 @@ jobs:
           artifacts: "bot-linux-x64.tar.gz"
 
   create-release-for-x64-linux-old:
-    needs: create-release-for-x64-linux
     runs-on: ubuntu-22.04
     permissions:
       contents: write
