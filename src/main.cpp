@@ -188,7 +188,7 @@ int main() {
     std::ranges::transform(content, content.begin(), ::tolower);
     std::lock_guard<std::mutex> lock(on_message_received_mutex);
     if (content == "what" || content == "what?" || content == "qua" ||
-        content == "qua?" || content == "w:info") {
+        content == "qua?" || content == "juyoo" || content == "w:info") {
       if (content == "w:info") {
         event.reply("This bot is created by aelnosu, licensed under the "
                     "`BSD-3-Clause-No-Nuclear-License-2014`.\nThe code can be "
