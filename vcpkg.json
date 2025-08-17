@@ -1,6 +1,7 @@
 {
   "dependencies": [
     "opus",
-    "zlib"
+    "zlib",
+    "tbb"
   ]
 }

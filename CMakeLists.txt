@@ -1,7 +1,7 @@
 #SPDX-License-Identifier: BSD-3-Clause-No-Nuclear-License-2014
 cmake_minimum_required(VERSION 3.23)
 
-set(VCPKG_LIBRARY_LINKAGE static CACHE STRING "Linkage of vcpkg libraries" FORCE)
+set(VCPKG_LIBRARY_LINKAGE static CACHE STRING "Static linking of vcpkg libraries" FORCE)
 
 project(discord-what-qua-bot)
 
@@ -13,6 +13,7 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 find_package(Opus CONFIG REQUIRED)
 find_package(OpenSSL REQUIRED)
 find_package(ZLIB REQUIRED)
+find_package(TBB CONFIG REQUIRED)
 
 include_directories(DPP/include)
 
@@ -49,6 +50,6 @@ add_dependencies(dpp mlspp bytes hpke mls_vectors tls_syntax Opus::opus OpenSSL:
 
 add_executable(bot src/main.cpp)
 
-add_dependencies(bot dpp OpenSSL::Crypto)
+add_dependencies(bot dpp OpenSSL::Crypto TBB::tbb TBB::tbbmalloc)
 
-target_link_libraries(bot PRIVATE dpp OpenSSL::Crypto)
+target_link_libraries(bot PRIVATE dpp OpenSSL::Crypto TBB::tbb TBB::tbbmalloc)

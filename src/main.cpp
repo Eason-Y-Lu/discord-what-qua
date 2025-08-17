@@ -3,7 +3,8 @@
 #include <csignal>
 #include <dpp/dpp.h>
 #include <fstream>
-#include <mutex>
+#include <oneapi/tbb.h>
+#include <oneapi/tbb/concurrent_vector.h>
 #include <openssl/err.h>
 #include <openssl/rand.h>
 #include <string>
@@ -39,8 +40,6 @@ std::string read_token() {
   }
 }
 
-std::mutex on_message_received_mutex;
-
 struct what_message_blob {
   dpp::snowflake author_id;
   int asked_times;
@@ -55,14 +54,13 @@ struct what_channel_blob {
 
 struct what_server_blob {
   dpp::snowflake server_id;
-  std::vector<what_channel_blob> channel_data;
+  tbb::concurrent_vector<what_channel_blob> channel_data;
 };
 
-void add_message_to_db(const dpp::snowflake guild_id,
-                       const dpp::snowflake channel_id,
-                       const dpp::snowflake author_id,
-                       const std::string &message,
-                       std::vector<what_server_blob> &main_what_db_vector) {
+void add_message_to_db(
+    const dpp::snowflake guild_id, const dpp::snowflake channel_id,
+    const dpp::snowflake author_id, const std::string &message,
+    tbb::concurrent_vector<what_server_blob> &main_what_db_vector) {
   for (auto &[server_id, channel_data] : main_what_db_vector) {
     if (server_id == guild_id) {
       for (auto &[channel_id_in_db, message_1, message_2] : channel_data) {
@@ -119,10 +117,10 @@ struct lookup_result {
   int asked_times;
 };
 
-lookup_result lookup_msg(std::vector<what_server_blob> &main_what_db_vector,
-                         const dpp::snowflake channel_id,
-                         const dpp::snowflake guild_id,
-                         const dpp::snowflake author_id) {
+lookup_result
+lookup_msg(tbb::concurrent_vector<what_server_blob> &main_what_db_vector,
+           const dpp::snowflake channel_id, const dpp::snowflake guild_id,
+           const dpp::snowflake author_id) {
   for (auto &server_blob : main_what_db_vector) {
     if (server_blob.server_id == guild_id) {
       for (auto &channel_blob : server_blob.channel_data) {
@@ -168,19 +166,18 @@ void endSignalHandler(int sig) {
 }
 
 int main() {
-  std::vector<what_server_blob> *main_what_db_vector_ptr =
-      new std::vector<what_server_blob>();
-  std::vector<what_server_blob> &main_what_db_vector = *main_what_db_vector_ptr;
+  auto *main_what_db_vector_ptr =
+      new tbb::concurrent_vector<what_server_blob>();
+  tbb::concurrent_vector<what_server_blob> &main_what_db_vector =
+      *main_what_db_vector_ptr;
   std::signal(SIGINT, endSignalHandler);
   dpp::cluster bot(read_token(),
                    dpp::i_guild_messages | dpp::i_message_content);
   bot.on_log(dpp::utility::cout_logger());
-
   bot.on_ready([&bot](const dpp::ready_t &event) {
     bot.log(dpp::loglevel::ll_info, "Logged in as " + bot.me.username);
     bot.log(dpp::loglevel::ll_info, "Bot ID is " + bot.me.id.str());
   });
-
   bot.on_message_create([&bot, &main_what_db_vector](
                             const dpp::message_create_t &event) {
     if (event.msg.author.is_bot()) {
@@ -192,13 +189,14 @@ int main() {
     }
     std::string content = event.msg.content;
     std::ranges::transform(content, content.begin(), ::tolower);
-    std::lock_guard<std::mutex> lock(on_message_received_mutex);
     if (content == "what" || content == "what?" || content == "qua" ||
         content == "qua?" || content == "juyoo" || content == "w:info") {
       if (content == "w:info") {
-        event.reply("This bot is created by aelnosu, licensed under the "
-                    "`BSD-3-Clause-No-Nuclear-License-2014`.\nThe code can be "
-                    "found at https://github.com/Eason-Y-Lu/discord-what-qua.");
+        event.reply(
+            "This bot is created by aelnosu, licensed under the "
+            "`BSD-3-Clause-No-Nuclear-License-2014`.\nThe code can be "
+            "found at https://github.com/Eason-Y-Lu/discord-what-qua.\n "
+            "Build: v3.0.0");
       } else {
         switch (const auto [msg_content, asked_times] =
                     lookup_msg(main_what_db_vector, event.msg.channel_id,
@@ -241,7 +239,6 @@ int main() {
                         main_what_db_vector);
     }
   });
-
   bot.start(dpp::st_wait);
   return 0;
 }
