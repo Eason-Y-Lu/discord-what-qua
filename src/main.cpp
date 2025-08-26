@@ -9,6 +9,7 @@
 #include <openssl/rand.h>
 #include <string>
 #include <vector>
+#include <map>
 
 int gen_rand_int(const int min, const int max) {
   unsigned char buffer[4];
@@ -159,6 +160,38 @@ lookup_msg(tbb::concurrent_vector<what_server_blob> &main_what_db_vector,
   return {"I don't know.", 0};
 }
 
+// Wellness resources data
+struct wellness_resource {
+  std::string name;
+  std::string url;
+  std::string description;
+};
+
+struct wellness_phone {
+  std::string name;
+  std::string number;
+  std::string description;
+};
+
+// Wellness resources
+const inline std::vector<wellness_resource> wellness_links = {
+  {"National Suicide Prevention Lifeline", "https://988lifeline.org/", "24/7 crisis support and suicide prevention"},
+  {"Crisis Text Line", "https://www.crisistextline.org/", "Free, 24/7 crisis support via text"},
+  {"Mental Health America", "https://www.mhanational.org/", "Mental health resources and screening tools"},
+  {"NAMI (National Alliance on Mental Illness)", "https://www.nami.org/", "Support, education and advocacy for mental health"},
+  {"Substance Abuse and Mental Health Services Administration", "https://www.samhsa.gov/", "Treatment locator and mental health resources"},
+  {"Anxiety and Depression Association of America", "https://adaa.org/", "Resources for anxiety and depression support"}
+};
+
+const inline std::vector<wellness_phone> wellness_phones = {
+  {"National Suicide Prevention Lifeline", "988", "24/7 crisis support and suicide prevention"},
+  {"Crisis Text Line", "Text HOME to 741741", "Free, 24/7 crisis support via text message"},
+  {"SAMHSA National Helpline", "1-800-662-4357", "24/7 treatment referral service"},
+  {"National Domestic Violence Hotline", "1-800-799-7233", "24/7 confidential support for domestic violence"},
+  {"Trans Lifeline", "877-565-8860", "24/7 support for transgender individuals"},
+  {"The Trevor Project", "1-866-488-7386", "24/7 crisis support for LGBTQ+ youth"}
+};
+
 void endSignalHandler(int sig) {
   std::printf("Received SIGINT, shutting down ...\n");
   std::printf("The operating system will handle the cleanup of the process.\n");
@@ -174,9 +207,66 @@ int main() {
   dpp::cluster bot(read_token(),
                    dpp::i_guild_messages | dpp::i_message_content);
   bot.on_log(dpp::utility::cout_logger());
+  
   bot.on_ready([&bot](const dpp::ready_t &event) {
     bot.log(dpp::loglevel::ll_info, "Logged in as " + bot.me.username);
     bot.log(dpp::loglevel::ll_info, "Bot ID is " + bot.me.id.str());
+    
+    // Create wellness slash command
+    if (dpp::run_once<struct register_bot_commands>()) {
+      dpp::slashcommand wellness_command("wellness", "Access wellness resources and support", bot.me.id);
+      
+      // Add sub-commands for links and phone numbers
+      wellness_command.add_option(
+        dpp::command_option(dpp::co_sub_command, "links", "View helpful wellness and mental health links")
+      );
+      wellness_command.add_option(
+        dpp::command_option(dpp::co_sub_command, "phone-numbers", "View important wellness and crisis phone numbers")
+      );
+      
+      bot.global_command_create(wellness_command);
+      bot.log(dpp::loglevel::ll_info, "Wellness command registered");
+    }
+  });
+  
+  // Handle slash command interactions
+  bot.on_slashcommand([&bot](const dpp::slashcommand_t &event) {
+    if (event.command.get_command_name() == "wellness") {
+      std::string subcommand = event.command.get_subcommand_name();
+      
+      if (subcommand == "links") {
+        // Create embed for wellness links
+        dpp::embed embed = dpp::embed()
+          .set_color(0x00ff00)
+          .set_title("🌱 Wellness Resources - Helpful Links")
+          .set_description("Here are some valuable mental health and wellness resources:");
+        
+        for (const auto& link : wellness_links) {
+          embed.add_field(link.name, "[Visit Website](" + link.url + ")\n" + link.description, false);
+        }
+        
+        embed.set_footer(dpp::embed_footer().set_text("Remember: You are not alone, and help is available."));
+        
+        dpp::message msg(event.command.channel_id, embed);
+        event.reply(msg);
+        
+      } else if (subcommand == "phone-numbers") {
+        // Create embed for phone numbers
+        dpp::embed embed = dpp::embed()
+          .set_color(0x0099ff)
+          .set_title("📞 Wellness Resources - Phone Numbers")
+          .set_description("Important phone numbers for crisis support and mental health:");
+        
+        for (const auto& phone : wellness_phones) {
+          embed.add_field(phone.name, "**" + phone.number + "**\n" + phone.description, false);
+        }
+        
+        embed.set_footer(dpp::embed_footer().set_text("These services are confidential and available 24/7."));
+        
+        dpp::message msg(event.command.channel_id, embed);
+        event.reply(msg);
+      }
+    }
   });
   bot.on_message_create([&bot, &main_what_db_vector](
                             const dpp::message_create_t &event) {
