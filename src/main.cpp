@@ -286,7 +286,7 @@ int main() {
             "This bot is created by aelnosu, licensed under the "
             "`BSD-3-Clause-No-Nuclear-License-2014`.\nThe code can be "
             "found at https://github.com/Eason-Y-Lu/discord-what-qua.\n "
-            "Build: v3.0.0");
+            "Build: v3.1.0");
       } else {
         switch (const auto [msg_content, asked_times] =
                     lookup_msg(main_what_db_vector, event.msg.channel_id,
